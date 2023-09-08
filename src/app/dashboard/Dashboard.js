@@ -4,10 +4,14 @@ import "./page.css"
 import TopupPopup from './TopupPopup'
 import axios from 'axios'
 import { Divider } from '@mui/material'
+import { Form, Input, Button, Modal } from 'antd';
+import { message } from 'antd';
+
 
 const baseURL = "http://localhost:8081/account"
 
 const Dashboard = () => {
+    
     const [account, setAccount] = useState(null)
     const [balanceHolder, setBalanceHolder] = useState(0.00)
     useEffect(()=>{
@@ -30,7 +34,39 @@ const Dashboard = () => {
         // }))
     },[])
 
-    const [onTopup, setOnTopup] = useState(false)
+    const [form] = Form.useForm();
+    const [showTransferForm, setShowTransferForm] = useState(false)
+
+    const validateAmount = (rule, value, callback) => {
+        const amount = parseFloat(value);
+        if (isNaN(amount) || amount <= 0) {
+            callback('Amount must be greater than 0');
+        } else {
+            callback();
+        }
+    };
+
+    const onFinish = (values) => {
+        axios({
+            method:'post',
+            url:"http://localhost:8081/account/transactionToOne?aid=1&receiverAid="+values.receiverId+"&accountPassword="+values.password+"&amount="+values.amount
+        }).catch((e)=>{
+            message.error('Transfer failed!');
+        }).then((response) => {
+            if (response.data.code == 0) {
+                message.success('Transfer successfully!');
+                setShowTransferForm(false);
+                form.resetFields();
+                return;
+            }
+            else{
+                console.log(response)
+                message.error(response.data.msg);
+            }
+        })
+        
+    };
+
     
     return (
         <div>
@@ -54,7 +90,64 @@ const Dashboard = () => {
             <Divider />
             <div className='Topup'>
                 <p>Transfer</p>
-                <button className='b2'>Transfer</button>
+                <Button className='b2' onClick={() => setShowTransferForm(true)}>Transfer</Button>
+                <Modal
+                title="Transfer"
+                open={showTransferForm}
+                onCancel={() => {setShowTransferForm(false);form.resetFields();}}
+                footer={null}
+            >
+                    <Form
+                        name="transferForm"
+                        onFinish={onFinish}
+                        form={form}
+                    >
+                        <Form.Item
+                            name="receiverId"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please enter receiver name!',
+                                },
+                            ]}
+                        >
+                            <Input placeholder="Receiver Account Name" />
+                        </Form.Item>
+                        <Form.Item
+                            name="amount"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please enter transfer amount!',
+                                },
+                                {
+                                    validator: validateAmount, 
+                                },
+                            ]}
+                        >
+                            <Input placeholder="Transfer Amount" />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="password"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please enter your password!',
+                                },
+                            ]}
+                        >
+                            <Input.Password placeholder="Your Password" />
+                        </Form.Item>
+
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit">
+                                Transfer
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                    </Modal>
+
             </div>
             {/* <p className='p1'>Recent Transactions</p> */}
             {/* <div className='Top-up'>
