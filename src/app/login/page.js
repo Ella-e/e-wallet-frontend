@@ -16,7 +16,14 @@ const Login = () => {
     console.log(e)
       message.error('Login failed!');
   }).then((response) => {
-    console.log(response)
+    if (response.status == 200) {
+      message.success('Login successfully!');
+      localStorage.setItem('token', response.data.token);
+      router.push('/dashboard?='+response.data.email)
+    }
+    else{
+      message.error('Login failed!');
+    }
   })
   };
 
