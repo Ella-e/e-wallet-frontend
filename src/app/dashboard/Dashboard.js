@@ -3,7 +3,7 @@ import React, { use, useEffect, useState } from 'react'
 import "./page.css"
 import TopupPopup from './TopupPopup'
 import axios from 'axios'
-import { Divider } from '@mui/material'
+import { Divider, FormControl, InputAdornment, InputLabel } from '@mui/material'
 import { Form, Input, Button, Modal, message } from 'antd';
 
 const baseURL = "http://localhost:8081/account"
@@ -12,30 +12,28 @@ const Dashboard = () => {
     
     const [account, setAccount] = useState(null)
     const [balanceHolder, setBalanceHolder] = useState(0.00)
+    const [tradeNo, setTradeNo] = useState("")
+    const [subject, setSubject] = useState("")
+    const [totalAmount, setTotalAmount] = useState(0)
     useEffect(()=>{
         // retrieve the account from database
         axios({
             method:'post',
             url:baseURL + "/findAccountByAid?aid=" + 1
         }).catch((e)=>{
-
         }).then((response)=>{
-            console.log(response.data.data)
-            setAccount(response.data.data)
-            setBalanceHolder(response.data.data.balance)
+            console.log(response?.data?.data)
+            setAccount(response?.data?.data)
+            setBalanceHolder(response?.data?.data?.balance)
         })
-        // setAccount(JSON.stringify({
-        //     aid:'1',
-        //     uid:'1',
-        //     balance:280,
-        //     accoundPwd:"123"
-        // }))
-    },[])
+    },[balanceHolder])
 
     const [form] = Form.useForm();
     const [form1] = Form.useForm();
+    const [form2] = Form.useForm();
     const [showTransferForm, setShowTransferForm] = useState(false)
     const [showTopUpForm,setShowTopUpForm]=useState(false)
+    const [showAlipayForm, setShowAlipayForm] = useState(false)
 
     const validateAmount = (rule, value, callback) => {
         const amount = parseFloat(value);
@@ -46,6 +44,12 @@ const Dashboard = () => {
         }
     };
 
+    // const handleAlipay = (e)=>{
+    //     e.preventDefault()
+    //     // const w = window.open('')
+    //     window.location.href = "http://localhost:8081/api/alipay/createWebTrade?tradeNo="+tradeNo+"&subject="+subject+"&totalAmount="+totalAmount
+    // }
+
     const onTopUpFinish = (values) => {
         axios({
             method:'post',
@@ -55,6 +59,7 @@ const Dashboard = () => {
         }).then((response) => {
             if (response.data.code == 0) {
                 message.success('Top up successfully!');
+                setBalanceHolder(response.data.data.balance)
                 setShowTopUpForm(false);
                 form1.resetFields();
                 return;
@@ -75,6 +80,7 @@ const Dashboard = () => {
         }).then((response) => {
             if (response.data.code == 0) {
                 message.success('Transfer successfully!');
+                setBalanceHolder(response.data.data.balance)
                 setShowTransferForm(false);
                 form.resetFields();
                 return;
@@ -83,9 +89,16 @@ const Dashboard = () => {
                 console.log(response)
                 message.error(response.data.msg);
             }
-        })
-        
+        }) 
     };
+
+    const onAlipayFinish = (value) => {
+        
+        console.log(value)
+        // const w = window.open('')
+        window.location.href = "http://localhost:8081/api/alipay/createWebTrade?tradeNo="+value.tradeNo+"&subject="+value.subject+"&totalAmount="+value.totalAmount
+        setShowTransferForm(false);
+    }
 
     
     return (
@@ -110,7 +123,7 @@ const Dashboard = () => {
                 open={showTopUpForm}
                 onCancel={() => {setShowTopUpForm(false);form1.resetFields();}}
                 footer={null}
-            >
+                >
                     <Form
                         name="topUpForm"
                         onFinish={onTopUpFinish}
@@ -213,28 +226,66 @@ const Dashboard = () => {
                     </Modal>
 
             </div>
-            {/* <p className='p1'>Recent Transactions</p> */}
-            {/* <div className='Top-up'>
-                <h3> SGD 50.00</h3>
-                <h5>Top-up</h5>
-                <h4> My Account</h4>
-                <h5> 27 AUG 2023</h5>
-            </div> */}
-            {/* <div className='Transfer'>
-                <h3> SGD 25.50</h3>
-                <h5>Transfer to</h5>
-                <h4> Yu Jiali (81****23)</h4>
-                <h5> 01 SEP 2023</h5>
-            </div> */}
-            {/* <p className='p1'>Quick Payment</p> */}
-            {/* <div className='Payment'>
-                <div className='Payment-photo'>
-                    <input type="image" src={""} width="72" height="72" alt="OPPs!"/>
-                    </div>
-                        <div className='Payment-name'>
-                            <h3> Alipay</h3>
-                        </div>
-                </div> */}
+            <div>
+                <Button className='b2' onClick={() => setShowAlipayForm(true)}>Alipay</Button>
+                <Modal
+                title="Alipay"
+                open={showAlipayForm}
+                onCancel={() => {setShowAlipayForm(false);form2.resetFields();}}
+                footer={null}
+                >
+                    <Form
+                        name="alipayForm"
+                        onFinish={onAlipayFinish}
+                        form={form2}
+                    >
+                        <Form.Item
+                            name="tradeNo"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please enter the trade number provided by the sellor!',
+                                },
+                                {
+                                    validator: validateAmount, 
+                                },
+                            ]}
+                        >
+                            <Input placeholder="trade number" />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="subject"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please enter the object you buy!',
+                                },
+                            ]}
+                        >
+                            <Input placeholder="Things you buy" />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="totalAmount"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please enter the price of the object!',
+                                },
+                            ]}
+                        >
+                            <Input placeholder="price" />
+                        </Form.Item>
+
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit">
+                                Alipay
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                    </Modal>
+            </div>
             </div>
         </div>
     )
