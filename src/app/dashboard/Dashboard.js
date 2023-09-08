@@ -33,7 +33,9 @@ const Dashboard = () => {
     },[])
 
     const [form] = Form.useForm();
+    const [form1] = Form.useForm();
     const [showTransferForm, setShowTransferForm] = useState(false)
+    const [showTopUpForm,setShowTopUpForm]=useState(false)
 
     const validateAmount = (rule, value, callback) => {
         const amount = parseFloat(value);
@@ -44,10 +46,30 @@ const Dashboard = () => {
         }
     };
 
+    const onTopUpFinish = (values) => {
+        axios({
+            method:'post',
+            url:baseURL+"/topup?aid=1&accountPassword="+values.password+"&amount="+values.amount
+        }).catch((e)=>{
+            message.error('Top up failed!');
+        }).then((response) => {
+            if (response.data.code == 0) {
+                message.success('Top up successfully!');
+                setShowTopUpForm(false);
+                form1.resetFields();
+                return;
+            }
+            else{
+                console.log(response)
+                message.error(response.data.msg);
+            }
+        })
+    }
+
     const onFinish = (values) => {
         axios({
             method:'post',
-            url:"http://localhost:8081/account/transactionToOne?aid=1&receiverAid="+values.receiverId+"&accountPassword="+values.password+"&amount="+values.amount
+            url:baseURL+"/transactionToOne?aid=1&receiverAid="+values.receiverId+"&accountPassword="+values.password+"&amount="+values.amount
         }).catch((e)=>{
             message.error('Transfer failed!');
         }).then((response) => {
@@ -82,8 +104,52 @@ const Dashboard = () => {
             </div>
             <Divider />
             <div className='Topup'>
-                {/* <button className='b1' onClick={()=>setOnTopup(true)}>Top-up</button> */}
-                {true&&<TopupPopup/>}
+            <Button className='b2' onClick={() => setShowTopUpForm(true)}>TOP UP</Button>
+                <Modal
+                title="Top Up"
+                open={showTopUpForm}
+                onCancel={() => {setShowTopUpForm(false);form1.resetFields();}}
+                footer={null}
+            >
+                    <Form
+                        name="topUpForm"
+                        onFinish={onTopUpFinish}
+                        form={form1}
+                    >
+                        <Form.Item
+                            name="amount"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please enter transfer amount!',
+                                },
+                                {
+                                    validator: validateAmount, 
+                                },
+                            ]}
+                        >
+                            <Input placeholder="Top Up Amount" />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="password"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Please enter your password!',
+                                },
+                            ]}
+                        >
+                            <Input.Password placeholder="Your Password" />
+                        </Form.Item>
+
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit">
+                                Top Up
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                    </Modal>
             </div>
             <Divider />
             <div className='Topup'>
