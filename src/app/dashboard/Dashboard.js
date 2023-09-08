@@ -4,9 +4,7 @@ import "./page.css"
 import TopupPopup from './TopupPopup'
 import axios from 'axios'
 import { Divider } from '@mui/material'
-import { Form, Input, Button, Modal } from 'antd';
-import { message } from 'antd';
-
+import { Form, Input, Button, Modal, message } from 'antd';
 
 const baseURL = "http://localhost:8081/account"
 
@@ -90,7 +88,7 @@ const Dashboard = () => {
             <Divider />
             <div className='Topup'>
                 <p>Transfer</p>
-                <Button className='b2' onClick={() => setShowTransferForm(true)}>Transfer</Button>
+                <Button className='b2' onClick={() => setShowTransferForm(true)}>TRANSFER</Button>
                 <Modal
                 title="Transfer"
                 open={showTransferForm}
