@@ -10,7 +10,8 @@ const Login = () => {
       url:"http://localhost:8081/user/login",
       data: {
           name: values.name,
-          password: values.password
+          password: values.password,
+          email:""
       }
   }).catch((e)=>{
     console.log(e)
