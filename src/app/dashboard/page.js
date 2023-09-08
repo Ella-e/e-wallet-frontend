@@ -1,72 +1,103 @@
 "use client"
-import React, { use, useEffect, useState } from 'react'
-import "./page.css"
-import TopupPopup from './TopupPopup'
+import * as React from 'react';
+import Box from '@mui/material/Box';
+import Drawer from '@mui/material/Drawer';
+import CssBaseline from '@mui/material/CssBaseline';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import List from '@mui/material/List';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
+import MailIcon from '@mui/icons-material/Mail';
+import Dashboard from './Dashboard';
+import History from './History';
+import Setting from './Setting';
 
-const Dashboard = () => {
-    const [account, setAccount] = useState(JSON.stringify({
-        aid:'1',
-        uid:'1',
-        balance:280,
-        accoundPwd:"123"
-    }))
-    const [balanceHolder, setBalanceHolder] = useState(0.00)
-    useEffect(()=>{
-        setAccount(JSON.stringify({
-            aid:'1',
-            uid:'1',
-            balance:280,
-            accoundPwd:"123"
-        }))
-        setBalanceHolder(JSON.parse(account)?.balance)
-    },[])
+const drawerWidth = 240;
 
-    const [onTopup, setOnTopup] = useState(false)
-    
-    return (
-        <div>
-            <div id ="functional-area">
-                <p className='p1'>My Balance</p>
-                <div className='Balance-Account'>
-                <table className='t1'>
-                    <tbody>
-                    <tr >
-                        <td className='td1'>SGD</td>
-                        <td className='td2'>{balanceHolder}</td>
-                    </tr>
-                </tbody>
-                </table>
-            </div>
-            <div className='Buttons'>
-                <button className='b1' onClick={()=>setOnTopup(true)}>Top-up</button>
-                {true&&<TopupPopup/>}
-                <button className='b2'>Transfer</button>
-            </div>
-            {/* <p className='p1'>Recent Transactions</p> */}
-            {/* <div className='Top-up'>
-                <h3> SGD 50.00</h3>
-                <h5>Top-up</h5>
-                <h4> My Account</h4>
-                <h5> 27 AUG 2023</h5>
-            </div> */}
-            {/* <div className='Transfer'>
-                <h3> SGD 25.50</h3>
-                <h5>Transfer to</h5>
-                <h4> Yu Jiali (81****23)</h4>
-                <h5> 01 SEP 2023</h5>
-            </div> */}
-            {/* <p className='p1'>Quick Payment</p> */}
-            {/* <div className='Payment'>
-                <div className='Payment-photo'>
-                    <input type="image" src={""} width="72" height="72" alt="OPPs!"/>
-                    </div>
-                        <div className='Payment-name'>
-                            <h3> Alipay</h3>
-                        </div>
-                </div> */}
-            </div>
-        </div>
-    )
+export default function MainBoard() {
+    const [activeTab, setActiveTab] = React.useState(1)
+  return (
+    <Box sx={{ display: 'flex' }}>
+      <CssBaseline />
+      <AppBar
+        position="fixed"
+        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
+      >
+        {/* <Toolbar>
+          <Typography variant="h6" noWrap component="div">
+            Permanent drawer
+          </Typography>
+        </Toolbar> */}
+      </AppBar>
+      <Drawer
+        sx={{
+          width: drawerWidth,
+          flexShrink: 0,
+          '& .MuiDrawer-paper': {
+            width: drawerWidth,
+            boxSizing: 'border-box',
+          },
+        }}
+        variant="permanent"
+        anchor="left"
+      >
+        <Toolbar />
+        Name:
+        <Divider />
+        <List>
+            <ListItem onClick={()=>{setActiveTab(1)}} disablePadding>
+                <ListItemButton>
+                    <ListItemIcon>
+                        <InboxIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Dashboard"}/>
+                </ListItemButton>
+            </ListItem>
+            <ListItem onClick={()=>{setActiveTab(2)}} disablePadding>
+                <ListItemButton>
+                    <ListItemIcon>
+                        <MailIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"History"}/>
+                </ListItemButton>
+            </ListItem>
+          {/* {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
+            <ListItem key={text} disablePadding>
+              <ListItemButton>
+                <ListItemIcon>
+                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                </ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItemButton>
+            </ListItem>
+          ))} */}
+        </List>
+        <Divider />
+        <List>
+        <ListItem disablePadding onClick={()=>{setActiveTab(3)}}>
+                <ListItemButton>
+                    <ListItemIcon>
+                        <InboxIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Settings"}/>
+                </ListItemButton>
+            </ListItem>
+        </List>
+      </Drawer>
+      <Box
+        component="main"
+        sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
+      >
+        {/* <Toolbar /> */}
+        {activeTab==1? <Dashboard/>: activeTab==2?<History/>:<Setting/>}
+        
+      </Box>
+    </Box>
+  );
 }
-
-export default Dashboard

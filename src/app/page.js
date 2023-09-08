@@ -1,8 +1,9 @@
-import Dashboard from './dashboard/page'
-import Register from './register/page'
+import MainBoard from "./dashboard/page";
+
 
 export default function Home() {
   return (
-    <div><Dashboard/></div>
+    // <div><Dashboard/></div>
+    <div><MainBoard/></div>
   )
 }
