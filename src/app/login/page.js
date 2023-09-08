@@ -58,7 +58,9 @@ const Login = () => {
                             </Button>
                         </Form.Item>
                     </Form>
+                    <Button href="/register">Register</Button>
     </div>
+    
 
   )
 }

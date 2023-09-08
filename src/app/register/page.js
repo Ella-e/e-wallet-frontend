@@ -1,46 +1,83 @@
 "use client"
-import { Stack, TextField } from '@mui/material';
-import React, { useState } from 'react'
-
+import React from 'react'
+import { Form, Input, Button, message } from 'antd';
+import axios from 'axios'
+import { useRouter } from 'next/navigation'
 
 const Register = () => {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const handleRegister = (e) => {
+    const router = useRouter();
+    const onFinish = (values) => {
+        axios({
+          method:'post',
+          url:"http://localhost:8081/user/register",
+          data: {
+              name: values.name,
+              email: values.email,
+              password: values.password
+          }
+      }).catch((e)=>{
         console.log(e)
-    }
-    return (
+          message.error('Login failed!');
+      }).then((response) => {
+        console.log(response)
+        window.alert("An identification email has been sent to your email address. Please check your email and click the link to activate your account.")
+        router.push('/login')
+      })
+      };
+    
+      const [form] = Form.useForm();
+    
+      return (
         <div>
-            <form onSubmit={handleRegister}>
-            <Stack>
-                <Stack>
-                <TextField
-                    label="Username"
-                    name="username"
-                    type="username"
-                    value={username}
-                    onChange={(event) => {
-                        setUsername(event.target.value);
-                    }}
-                    placeholder="Username"
-                />
-                </Stack>
-                <Stack>
-                <TextField
-                    label="Password"
-                    name="password"
-                    type="password"
-                    value={password}
-                    onChange={(event) => {
-                        setPassword(event.target.value);
-                    }}
-                    placeholder="Password"
-                />
-                </Stack>
-            </Stack>
-            </form>
+          <Form
+              name="form"
+              onFinish={onFinish}
+              form={form}
+          >
+                            <Form.Item
+                                name="name"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please enter the name!',
+                                    },
+                                ]}
+                            >
+                                <Input placeholder="Name" />
+                            </Form.Item>
+                            <Form.Item
+                                name="email"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please enter the email!',
+                                    },
+                                ]}
+                            >
+                                <Input placeholder="Email" />
+                            </Form.Item>
+                            <Form.Item
+                                name="password"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please enter your password!',
+                                    },
+                                ]}
+                            >
+                                <Input.Password placeholder="Password" />
+                            </Form.Item>
+    
+                            <Form.Item>
+                                <Button type="primary" htmlType="submit">
+                                    Register
+                                </Button>
+                            </Form.Item>
+                        </Form>
         </div>
-    )
+        
+    
+      )
 }
 
 export default Register
