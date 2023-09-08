@@ -2,26 +2,34 @@
 import React from 'react'
 import { Form, Input, Button, message } from 'antd';
 import axios from 'axios'
-import { useRouter } from 'next/navigation'
+import { useRouter , useSearchParams } from 'next/navigation'
+import { headers } from '../../../next.config';
 
-const Register = () => {
+const Account = () => {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const onFinish = (values) => {
         axios({
           method:'post',
-          url:"http://localhost:8081/user/register",
+          url:"http://localhost:8081/account/createAccount",
           data: {
-              name: values.name,
-              email: values.email,
-              password: values.password
-          }
+              uid:searchParams.get("uid"),
+              balance:0,
+              accountPassword:values.password,
+              currency:"SGD"
+          },
+          headers: {
+            'token': localStorage.getItem('token')
+            }
       }).catch((e)=>{
-        console.log(e)
-          message.error('Login failed!');
+        message.error('Set password failed!');
       }).then((response) => {
-        console.log(response)
-        window.alert("An identification email has been sent to your email address. Please check your email and click the link to activate your account.")
-        router.push('/login')
+        if(response.data.code==0){
+            router.push('/dashboard?aid='+response.data.data.aid)
+        }
+        else{
+            message.error(response.data.msg)
+        }
       })
       };
     
@@ -41,28 +49,6 @@ const Register = () => {
               form={form}
           >
                             <Form.Item
-                                name="name"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please enter the name!',
-                                    },
-                                ]}
-                            >
-                                <Input placeholder="Name" />
-                            </Form.Item>
-                            <Form.Item
-                                name="email"
-                                rules={[
-                                    {
-                                        required: true,
-                                        message: 'Please enter the email!',
-                                    },
-                                ]}
-                            >
-                                <Input placeholder="Email" />
-                            </Form.Item>
-                            <Form.Item
                                 name="password"
                                 rules={[
                                     {
@@ -79,7 +65,7 @@ const Register = () => {
     
                             <Form.Item>
                                 <Button type="primary" htmlType="submit">
-                                    Register
+                                    Set Transaction Password
                                 </Button>
                             </Form.Item>
                         </Form>
@@ -89,4 +75,4 @@ const Register = () => {
       )
 }
 
-export default Register
+export default Account

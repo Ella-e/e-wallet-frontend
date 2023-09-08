@@ -5,16 +5,27 @@ import TopupPopup from './TopupPopup'
 import axios from 'axios'
 import { Divider, FormControl, InputAdornment, InputLabel } from '@mui/material'
 import { Form, Input, Button, Modal, message } from 'antd';
+import { useRouter,useSearchParams } from 'next/navigation'
 
 const baseURL = "http://localhost:8081/account"
 
 const Dashboard = () => {
-    
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const [email, setEmail] = useState("")
     const [account, setAccount] = useState(null)
     const [balanceHolder, setBalanceHolder] = useState(0.00)
     const [tradeNo, setTradeNo] = useState("")
     const [subject, setSubject] = useState("")
     const [totalAmount, setTotalAmount] = useState(0)
+
+    useEffect(() => {
+        setEmail(searchParams.get("email"));
+        return () => {
+            localStorage.removeItem('token');
+        }
+    },[])
+
     useEffect(()=>{
         // retrieve the account from database
         axios({

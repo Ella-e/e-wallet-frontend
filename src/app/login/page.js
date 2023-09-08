@@ -9,9 +9,9 @@ const Login = () => {
       method:'post',
       url:"http://localhost:8081/user/login",
       data: {
-          name: values.name,
+          name: "",
           password: values.password,
-          email:""
+          email:values.email
       }
   }).catch((e)=>{
     console.log(e)
@@ -20,10 +20,26 @@ const Login = () => {
     if (response.status == 200) {
       message.success('Login successfully!');
       localStorage.setItem('token', response.data.token);
-      router.push('/dashboard?='+response.data.email)
+      axios({
+        method:'get',
+        url:"http://localhost:8081/account/findAccountByUid?uid="+response.data.id,
+        headers: {
+          'token': response.data.token
+        }
+    }).catch((e)=>{
+        message.error('Fetch account failed!');
+    }).then((response) => {
+      if (response.code == "0") {
+        localStorage.setItem('data', response.data[0]);
+        router.push('/dashboard?aid='+response.data[0].aid)
+      }
+      else{
+        router.push('/account?uid='+response.data.uid)
+      }
+      })
     }
     else{
-      message.error('Login failed!');
+      message.error(response.message)
     }
   })
   };
@@ -38,15 +54,15 @@ const Login = () => {
           form={form}
       >
                         <Form.Item
-                            name="name"
+                            name="email"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please enter account name!',
+                                    message: 'Please enter your email!',
                                 },
                             ]}
                         >
-                            <Input placeholder="Account Name" />
+                            <Input placeholder="Email" />
                         </Form.Item>
                         <Form.Item
                             name="password"
@@ -57,7 +73,7 @@ const Login = () => {
                                 },
                             ]}
                         >
-                            <Input.Password placeholder="Your Password" />
+                            <Input.Password placeholder="Name" />
                         </Form.Item>
 
                         <Form.Item>
