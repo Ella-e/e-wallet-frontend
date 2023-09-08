@@ -73,7 +73,7 @@ const Login = () => {
                                 },
                             ]}
                         >
-                            <Input.Password placeholder="Name" />
+                            <Input.Password placeholder="Password" />
                         </Form.Item>
 
                         <Form.Item>

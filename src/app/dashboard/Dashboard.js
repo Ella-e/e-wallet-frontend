@@ -6,13 +6,13 @@ import axios from 'axios'
 import { Divider, FormControl, InputAdornment, InputLabel } from '@mui/material'
 import { Form, Input, Button, Modal, message } from 'antd';
 import { useRouter,useSearchParams } from 'next/navigation'
+import { headers } from '../../../next.config'
 
 const baseURL = "http://localhost:8081/account"
 
 const Dashboard = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const [email, setEmail] = useState("")
     const [account, setAccount] = useState(null)
     const [balanceHolder, setBalanceHolder] = useState(0.00)
     const [tradeNo, setTradeNo] = useState("")
@@ -20,7 +20,6 @@ const Dashboard = () => {
     const [totalAmount, setTotalAmount] = useState(0)
 
     useEffect(() => {
-        setEmail(searchParams.get("email"));
         return () => {
             localStorage.removeItem('token');
         }
@@ -30,7 +29,10 @@ const Dashboard = () => {
         // retrieve the account from database
         axios({
             method:'post',
-            url:baseURL + "/findAccountByAid?aid=" + 1
+            url:baseURL + "/findAccountByAid?aid=" + searchParams.get("aid"),
+            headers: {
+                'token': localStorage.getItem('token')
+            }
         }).catch((e)=>{
         }).then((response)=>{
             console.log(response?.data?.data)
@@ -64,7 +66,10 @@ const Dashboard = () => {
     const onTopUpFinish = (values) => {
         axios({
             method:'post',
-            url:baseURL+"/topup?aid=1&accountPassword="+values.password+"&amount="+values.amount
+            url:baseURL+"/topup?aid=1&accountPassword="+values.password+"&amount="+values.amount,
+            headers: {
+                'token': localStorage.getItem('token')
+            }
         }).catch((e)=>{
             message.error('Top up failed!');
         }).then((response) => {
@@ -85,7 +90,10 @@ const Dashboard = () => {
     const onFinish = (values) => {
         axios({
             method:'post',
-            url:baseURL+"/transactionToOne?aid=1&receiverAid="+values.receiverId+"&accountPassword="+values.password+"&amount="+values.amount
+            url:baseURL+"/transactionToOne?aid=1&receiverAid="+values.receiverId+"&accountPassword="+values.password+"&amount="+values.amount,
+            headers: {
+                'token': localStorage.getItem('token')
+            }
         }).catch((e)=>{
             message.error('Transfer failed!');
         }).then((response) => {

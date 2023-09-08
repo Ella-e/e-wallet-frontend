@@ -17,7 +17,7 @@ const Register = () => {
           }
       }).catch((e)=>{
         console.log(e)
-          message.error('Login failed!');
+          message.error('Register failed!');
       }).then((response) => {
         console.log(response)
         window.alert("An identification email has been sent to your email address. Please check your email and click the link to activate your account.")
