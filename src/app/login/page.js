@@ -8,16 +8,17 @@ const Login = () => {
     axios({
       method:'post',
       url:"http://localhost:8081/user/login",
-      data: {
+      withCredentials:false,
+      data: JSON.stringify({
           name: "",
-          password: values.password,
-          email:values.email
-      }
+          email:values.email,
+          password: values.password
+      })
   }).catch((e)=>{
     console.log(e)
       message.error('Login failed!');
   }).then((response) => {
-    if (response.status == 200) {
+    if (response.statusCode == 200) {
       message.success('Login successfully!');
       localStorage.setItem('token', response.data.token);
       axios({
