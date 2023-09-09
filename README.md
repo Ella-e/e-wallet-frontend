@@ -24,16 +24,16 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 
 ## Features
 
-User can create an account to the application
-User can need to activate their account by clicking the link sent to their email
-User can login to the application
-User can apply to reset their password by inputting the verification code sent to their email
-User can reset their password after inputting the verification code
-User can create a new wallet bound to their account
-User can view their wallet balance
-User can deposit money to their wallet
-User can make a payment to another user
-User can make a payment to a third party payment method (Alipay)
-User can view their transaction history
+- User can create an account to the application
+- User can need to activate their account by clicking the link sent to their email
+- User can login to the application
+- User can apply to reset their password by inputting the verification code sent to their email
+- User can reset their password after inputting the verification code
+- User can create a new wallet bound to their account
+- User can view their wallet balance
+- User can deposit money to their wallet
+- User can make a payment to another user
+- User can make a payment to a third party payment method (Alipay)
+- User can view their transaction history
 
 We have also implemented a fully functional backend for this application. Please refer to the following repository for more information: https://github.com/Ella-e/e-wallet-backend
