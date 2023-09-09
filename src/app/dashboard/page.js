@@ -17,11 +17,13 @@ import MailIcon from '@mui/icons-material/Mail';
 import Dashboard from './Dashboard';
 import History from './History';
 import Setting from './Setting';
+import { useSearchParams } from 'next/navigation';
 
 const drawerWidth = 240;
 
 export default function MainBoard() {
-    const [activeTab, setActiveTab] = React.useState(1)
+  const [activeTab, setActiveTab] = React.useState(1)
+  const searchParams = useSearchParams();
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -48,7 +50,8 @@ export default function MainBoard() {
         anchor="left"
       >
         <Toolbar />
-        Name:
+        <p>Email: {localStorage.getItem('email')}</p>
+        <p>Account Id: {searchParams.get('aid')}</p>
         <Divider />
         <List>
             <ListItem onClick={()=>{setActiveTab(1)}} disablePadding>

@@ -20,21 +20,25 @@ const Dashboard = () => {
     const [totalAmount, setTotalAmount] = useState(0)
 
     useEffect(() => {
-        return () => {
-            localStorage.removeItem('token');
-        }
+        // return () => {
+        //     localStorage.removeItem('token');
+        // }
     },[])
 
     useEffect(()=>{
+        console.log('run')
+        console.log(localStorage.getItem('token'))
+        console.log(searchParams.get("aid"))
         // retrieve the account from database
         axios({
-            method:'post',
+            method:'get',
             url:baseURL + "/findAccountByAid?aid=" + searchParams.get("aid"),
             headers: {
                 'token': localStorage.getItem('token')
             }
         }).catch((e)=>{
         }).then((response)=>{
+            console.log(response)
             console.log(response?.data?.data)
             setAccount(response?.data?.data)
             setBalanceHolder(response?.data?.data?.balance)
@@ -66,7 +70,7 @@ const Dashboard = () => {
     const onTopUpFinish = (values) => {
         axios({
             method:'post',
-            url:baseURL+"/topup?aid=1&accountPassword="+values.password+"&amount="+values.amount,
+            url:baseURL+"/topup?aid="+searchParams.get("aid")+"&accountPassword="+values.password+"&amount="+values.amount,
             headers: {
                 'token': localStorage.getItem('token')
             }
@@ -88,27 +92,35 @@ const Dashboard = () => {
     }
 
     const onFinish = (values) => {
-        axios({
-            method:'post',
-            url:baseURL+"/transactionToOne?aid=1&receiverAid="+values.receiverId+"&accountPassword="+values.password+"&amount="+values.amount,
-            headers: {
-                'token': localStorage.getItem('token')
-            }
-        }).catch((e)=>{
-            message.error('Transfer failed!');
-        }).then((response) => {
-            if (response.data.code == 0) {
-                message.success('Transfer successfully!');
-                setBalanceHolder(response.data.data.balance)
-                setShowTransferForm(false);
-                form.resetFields();
-                return;
-            }
-            else{
-                console.log(response)
-                message.error(response.data.msg);
-            }
-        }) 
+        console.log(values.receiverId)
+        if (values.receiverId == searchParams.get("aid")) {
+            message.error("Please do top up")
+        } else {
+            axios({
+                method:'post',
+                url:baseURL+"/transactionToOne?aid="+searchParams.get("aid")+"&receiverAid="+values.receiverId+"&accountPassword="+values.password+"&amount="+values.amount,
+                headers: {
+                    'token': localStorage.getItem('token')
+                }
+            }).catch((e)=>{
+                message.error('Transfer failed!');
+            }).then((response) => {
+                if (!response) {
+                    message.error("account not exist or password in correct");
+                }
+                else if (response.data.code == 0) {
+                    message.success('Transfer successfully!');
+                    setBalanceHolder(response.data.data.balance)
+                    setShowTransferForm(false);
+                    form.resetFields();
+                    return;
+                }
+                else{
+                    console.log(response)
+                    message.error(response.data.msg);
+                }
+            }) 
+        }
     };
 
     const onAlipayFinish = (value) => {

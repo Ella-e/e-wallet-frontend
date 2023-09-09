@@ -3,16 +3,18 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { useSearchParams } from 'next/navigation';
 
 const baseURL = "http://localhost:8081/transaction"
 
 const History = () => {
     const [history, setHistory] = useState(null)
+    const searchParams = useSearchParams();
 
     useEffect(()=>{
         axios({
             method:'post',
-            url:baseURL + "/findTransactionByFromId?fromAccountId="+1
+            url:baseURL + "/findTransactionByFromId?fromAccountId="+searchParams.get('aid')
         }).catch((e)=>{
 
         }).then((response)=>{
