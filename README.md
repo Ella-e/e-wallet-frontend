@@ -1,3 +1,7 @@
+# eTreasury
+
+eTreasury is a web application that allows users to manage their finances. It is built using React and NextJS, with features of transaction and third party payment methods.
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
@@ -18,17 +22,18 @@ You can start editing the page by modifying `app/page.js`. The page auto-updates
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-## Learn More
+## Features
 
-To learn more about Next.js, take a look at the following resources:
+User can create an account to the application
+User can need to activate their account by clicking the link sent to their email
+User can login to the application
+User can apply to reset their password by inputting the verification code sent to their email
+User can reset their password after inputting the verification code
+User can create a new wallet bound to their account
+User can view their wallet balance
+User can deposit money to their wallet
+User can make a payment to another user
+User can make a payment to a third party payment method (Alipay)
+User can view their transaction history
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+We have also implemented a fully functional backend for this application. Please refer to the following repository for more information: https://github.com/Ella-e/e-wallet-backend
